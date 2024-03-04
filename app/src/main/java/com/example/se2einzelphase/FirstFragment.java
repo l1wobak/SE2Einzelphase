@@ -4,16 +4,27 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.se2einzelphase.databinding.FragmentFirstBinding;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
+    private EditText inputField;
+    private TextView resultTextView;
 
     @Override
     public View onCreateView(
@@ -22,7 +33,14 @@ public class FirstFragment extends Fragment {
     ) {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+
+        View view = binding.getRoot();
+        inputField = view.findViewById(R.id.editTextMatNo);
+        resultTextView = view.findViewById(R.id.textview_server_response);
+        return view;
+
+
+
 
     }
 
@@ -32,10 +50,56 @@ public class FirstFragment extends Fragment {
         binding.buttonFirst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(FirstFragment.this)
-                        .navigate(R.id.action_FirstFragment_to_SecondFragment);
+                String matriculationNumber = inputField.getText().toString();
+
+                resultTextView.setText("");
+                calculateMatriculationNumber(matriculationNumber);
+                sendMatriculationNumber(matriculationNumber);
+
             }
-        });
+
+
+            }
+        );
+    }
+
+    private void calculateMatriculationNumber(String matriculationNumber) {
+
+    }
+
+    private void sendMatriculationNumber(final String matriculationNumber) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Socket socket = new Socket("se2-submission.aau.at", 20080);
+
+                    PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
+                    printWriter.println(matriculationNumber);
+
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    StringBuilder responseBuilder = new StringBuilder();
+                    String line;
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        responseBuilder.append(line);
+                    }
+
+                    final String result = responseBuilder.toString();
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            resultTextView.append("Serverantwort: " + result+"\n");
+                        }
+                    });
+
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override
