@@ -6,21 +6,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import com.example.se2einzelphase.databinding.FragmentFirstBinding;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,8 +38,6 @@ public class FirstFragment extends Fragment {
         return view;
 
 
-
-
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -57,8 +49,14 @@ public class FirstFragment extends Fragment {
                 String matriculationNumber = inputField.getText().toString();
 
                 resultTextView.setText("");
-                calculateMatriculationNumber(matriculationNumber);
-                sendMatriculationNumber(matriculationNumber);
+                if(matriculationNumber.length()!=8){
+                    resultTextView.setText("Bitte geben Sie eine gültige Matrikelnummer ein (8 Zeichen lang)");
+                }
+                else{
+                    calculateMatriculationNumber(matriculationNumber);
+                    sendMatriculationNumber(matriculationNumber);
+                }
+
 
             }
 
