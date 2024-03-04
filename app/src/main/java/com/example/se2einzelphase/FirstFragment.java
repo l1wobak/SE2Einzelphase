@@ -19,6 +19,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class FirstFragment extends Fragment {
 
@@ -64,6 +68,36 @@ public class FirstFragment extends Fragment {
     }
 
     private void calculateMatriculationNumber(String matriculationNumber) {
+
+        /**
+         * //Matrikelnummer 12203495 = Aufgabe 3
+         *Matrikelnummer sortieren, wobei zuerst alle geraden,
+         * dann alle ungeraden Ziffern gereiht sind (erst die
+         * geraden, dann alle ungeraden Ziffern aufsteigend
+         * sortiert)
+         */
+
+        int matno = Integer.parseInt(matriculationNumber);
+        List<Integer> evenDigits = new ArrayList<>();
+        List<Integer> oddDigits = new ArrayList<>();
+
+        while (matno > 0) {
+            int digit = matno % 10;
+
+            if (digit % 2 == 0) {
+                evenDigits.add(digit);
+            } else {
+                oddDigits.add(digit);
+            }
+            matno /= 10;
+        }
+
+        Collections.sort(evenDigits);
+        Collections.sort(oddDigits);
+        evenDigits.addAll(oddDigits);
+
+
+        resultTextView.append("Rechnung mit Matrikelnummer: "+ evenDigits+"\n");
 
     }
 
