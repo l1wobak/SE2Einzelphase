@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-mergeDebugResources-36:\\layout\\fragment_second.xml",
+        "source": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-main-39:\\layout\\fragment_second.xml"
+    },
+    {
+        "merged": "com.example.se2einzelphase.app-mergeDebugResources-36:/layout/fragment_first.xml",
+        "source": "com.example.se2einzelphase.app-main-39:/layout/fragment_first.xml"
+    },
+    {
+        "merged": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-mergeDebugResources-36:\\layout\\fragment_first.xml",
+        "source": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-main-39:\\layout\\fragment_first.xml"
+    },
+    {
+        "merged": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-mergeDebugResources-36:\\layout\\content_main.xml",
+        "source": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-main-39:\\layout\\content_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-mergeDebugResources-36:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\lukas\\.gradle\\daemon\\7.4\\com.example.se2einzelphase.app-main-39:\\layout\\activity_main.xml"
+    }
+]

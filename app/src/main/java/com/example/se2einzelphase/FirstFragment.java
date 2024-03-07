@@ -23,6 +23,10 @@ public class FirstFragment extends Fragment {
     private FragmentFirstBinding binding;
     private EditText inputField;
     private TextView resultTextView;
+    private static final String DOMAIN_NAME = "se2-submission.aau.at";
+    private static final int PORT = 20080;
+    private static final int MATRIKELNUMMER_MINIMUM_LENGTH = 7;
+    private static final int MATRIKELNUMMER_MAXIMUM_LENGTH = 9;
 
     @Override
     public View onCreateView(
@@ -48,21 +52,29 @@ public class FirstFragment extends Fragment {
             public void onClick(View view) {
                 String matriculationNumber = inputField.getText().toString();
 
-                resultTextView.setText("");
-                if(matriculationNumber.length()!=8){
-                    resultTextView.setText("Bitte geben Sie eine gültige Matrikelnummer ein (8 Zeichen lang)");
+                if(matriculationNumber.length()> MATRIKELNUMMER_MAXIMUM_LENGTH || matriculationNumber.length() < MATRIKELNUMMER_MINIMUM_LENGTH){
+                    resultTextView.setText("Bitte geben Sie eine gültige Matrikelnummer ein (zwischen 7 und 9 Zeichen)");
+                }
+                else{
+                    sendMatriculationNumber(matriculationNumber);
+                }
+            }
+            }
+        );
+
+        binding.button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String matriculationNumber = inputField.getText().toString();
+
+                if(matriculationNumber.length()> MATRIKELNUMMER_MAXIMUM_LENGTH || matriculationNumber.length() < MATRIKELNUMMER_MINIMUM_LENGTH){
+                    resultTextView.setText("Bitte geben Sie eine gültige Matrikelnummer ein (zwischen 7 und 9 Zeichen)");
                 }
                 else{
                     calculateMatriculationNumber(matriculationNumber);
-                    sendMatriculationNumber(matriculationNumber);
                 }
-
-
             }
-
-
-            }
-        );
+        });
     }
 
     private void calculateMatriculationNumber(String matriculationNumber) {
@@ -94,8 +106,22 @@ public class FirstFragment extends Fragment {
         Collections.sort(oddDigits);
         evenDigits.addAll(oddDigits);
 
+        final String result = "Rechnung mit Matrikelnummer"+evenDigits+"\n";
 
-        resultTextView.append("Rechnung mit Matrikelnummer: "+ evenDigits+"\n");
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                String textfieldText = resultTextView.getText().toString();
+                if(textfieldText.contains("\n")) {
+                    resultTextView.setText(result+textfieldText.split("\n")[1]);
+                }
+                else {
+                    resultTextView.setText(result+textfieldText);
+                }
+
+            }
+        });
+
 
     }
 
@@ -104,7 +130,7 @@ public class FirstFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    Socket socket = new Socket("se2-submission.aau.at", 20080);
+                    Socket socket = new Socket(DOMAIN_NAME, PORT);
 
                     PrintWriter printWriter = new PrintWriter(socket.getOutputStream(), true);
                     printWriter.println(matriculationNumber);
@@ -117,18 +143,32 @@ public class FirstFragment extends Fragment {
                         responseBuilder.append(line);
                     }
 
-                    final String result = responseBuilder.toString();
+                    String result = "Serverantwort: "+responseBuilder.toString();
 
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            resultTextView.append("Serverantwort: " + result+"\n");
+                            String textfieldText = resultTextView.getText().toString();
+                            if(textfieldText.contains("Serverantwort:")) {
+                                resultTextView.setText(textfieldText.split("Serverantwort:")[0] + result);
+                            }
+                            else {
+                                resultTextView.setText(textfieldText+result);
+                            }
+
                         }
                     });
 
                     socket.close();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            resultTextView.setText("Error communicating with the Server");
+
+                        }
+                    });
                 }
             }
         }).start();
